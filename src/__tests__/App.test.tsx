@@ -1,7 +1,8 @@
-import { act } from 'react';
+import { StrictMode, act } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { App } from '../App';
+import { installFakeAudio } from '../lib/__tests__/fakeAudio';
 
 // jsdom has no AudioContext, so the beeper degrades to a no-op on its own and
 // these tests exercise the real component tree without any audio mocking.
@@ -121,6 +122,36 @@ describe('App', () => {
 
     press('Stop');
     expect(screen.getByRole('slider', { name: 'Goal Time' })).toBeInTheDocument();
+  });
+
+  // React StrictMode mounts, unmounts and remounts every component in
+  // development. Anything torn down in an effect cleanup has to survive that,
+  // and the audio graph did not: the app ran silently under `npm run dev`.
+  it('still makes sound after a StrictMode remount', () => {
+    const audio = installFakeAudio();
+    try {
+      act(() => {
+        render(
+          <StrictMode>
+            <App />
+          </StrictMode>,
+        );
+      });
+      press('Got it!');
+      press('Start');
+
+      const context = audio.live;
+      expect(context, 'no AudioContext was created').toBeDefined();
+      expect(context?.state).toBe('running');
+
+      tick(5000);
+      tick(4000);
+
+      const gains = context?.events.filter((event) => event.param === 'gain') ?? [];
+      expect(gains.some((event) => event.value > 0)).toBe(true);
+    } finally {
+      audio.restore();
+    }
   });
 
   it('stops a running session when the page is hidden', () => {

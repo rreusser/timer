@@ -32,19 +32,36 @@ function getAudioContextCtor(): AudioContextCtor | undefined {
   );
 }
 
+/**
+ * On iOS, Web Audio defaults to the "ambient" audio session, which the
+ * hardware ring/silent switch mutes. A training app whose whole point is an
+ * audible cue has to opt into playback instead (Safari 16.4+).
+ */
+function claimPlaybackSession(): void {
+  const session = (navigator as Navigator & { audioSession?: { type: string } }).audioSession;
+  if (!session) return;
+  try {
+    session.type = 'playback';
+  } catch {
+    // Not settable on this browser.
+  }
+}
+
 export function createBeeper(): Beeper {
   let ctx: AudioContext | undefined;
   let osc: OscillatorNode | undefined;
   let gain: GainNode | undefined;
-  let disposed = false;
 
+  // Rebuilds the graph on demand. `dispose()` deliberately leaves no latch
+  // behind: React StrictMode runs effect cleanups on a component it is about
+  // to remount, and a one-way teardown there silenced the whole app in dev.
   function ensure(): AudioContext | undefined {
-    if (disposed) return undefined;
     if (ctx) return ctx;
 
     const Ctor = getAudioContextCtor();
     if (!Ctor) return undefined;
 
+    claimPlaybackSession();
     ctx = new Ctor();
     gain = ctx.createGain();
     gain.gain.value = 0;
@@ -103,7 +120,6 @@ export function createBeeper(): Beeper {
     },
 
     dispose(): void {
-      disposed = true;
       try {
         osc?.stop();
       } catch {

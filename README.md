@@ -89,6 +89,21 @@ DONE      --------->  RESETTING   wait `interval` - 2s,          then READYSET
 The standby delay is floored at 1s, so a low `delay` with high `randomness`
 can never fire instantly.
 
+## If you can't hear anything
+
+- **Web Audio needs a gesture.** The context is created and resumed inside the
+  Start click. Nothing you do before pressing Start makes a sound, by design.
+- **On an iPhone, check the ring/silent switch.** Web Audio normally plays
+  into the "ambient" session, which that switch mutes. The app asks for the
+  `playback` session instead (`navigator.audioSession`), which fixes it on
+  Safari 16.4+; on older iOS the switch still wins.
+- **Serve over HTTPS.** Not an audio requirement, but the service worker and
+  wake lock both need a secure context.
+
+The standby tone is deliberately quiet (gain 0.3 at 440Hz) and the go/stop
+beeps are loud (gain 1.0 at 880Hz, 100ms). If you hear the beeps but not the
+standby tone, that is working as intended.
+
 ## Development
 
 ```sh
