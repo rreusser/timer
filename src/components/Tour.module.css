@@ -1,0 +1,65 @@
+.outerContainer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.container {
+  position: absolute;
+  top: calc(20px + var(--safe-top));
+  right: 20px;
+  bottom: calc(20px + var(--safe-bottom));
+  left: 20px;
+
+  display: flex;
+  flex-direction: column;
+
+  background-color: var(--primary-very-dark);
+  color: var(--primary-very-light);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.content {
+  flex: 3;
+  padding: 15px;
+  text-align: center;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.heading {
+  text-transform: uppercase;
+  font-size: 1.5em;
+  margin: 0;
+}
+
+.body {
+  font-family: var(--font-body);
+  line-height: 1.45;
+}
+
+.link {
+  color: white;
+}
+
+.install {
+  font-family: var(--font-body);
+  line-height: 1.45;
+  border-top: 1px solid var(--primary-dark);
+  padding-top: 0.8em;
+  margin-top: 1.4em;
+}
+
+.share {
+  vertical-align: -0.3em;
+  margin: 0 0.15em;
+}
+
+.item {
+  flex: 0.5;
+  display: flex;
+  flex-direction: column;
+  max-height: 80px;
+}

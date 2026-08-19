@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Reaction Trainer">
+  <rect width="512" height="512" rx="112" fill="#353237"/>
+  <!-- stopwatch crown -->
+  <rect x="216" y="52" width="80" height="34" rx="12" fill="#b2a3bd"/>
+  <!-- dial -->
+  <circle cx="256" cy="300" r="150" fill="none" stroke="#6c587b" stroke-width="34"/>
+  <!-- the par arc: from 12 o'clock, sweeping clockwise -->
+  <path d="M256 150 A150 150 0 0 1 362 406" fill="none" stroke="#62936c" stroke-width="34" stroke-linecap="round"/>
+  <!-- hand -->
+  <path d="M256 300 L256 190" stroke="#e5e0e9" stroke-width="26" stroke-linecap="round"/>
+  <circle cx="256" cy="300" r="26" fill="#e5e0e9"/>
+</svg>

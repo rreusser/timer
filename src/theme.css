@@ -1,0 +1,71 @@
+/*
+ * The original palette, derived at runtime with the `color` package from
+ * #B2A3BD and #D8AC97. Those derivations are resolved to literal hex here so
+ * the app ships no colour library and the values can never drift.
+ */
+:root {
+  --primary-very-dark: #353237;
+  --primary-dark: #6c587b;
+  --primary-mid: #907aa0;
+  --primary-light: #b2a3bd;
+  --primary-very-light: #e5e0e9;
+
+  --secondary-very-dark: #33383b;
+  --secondary-dark: #557787;
+  --secondary-mid: #7a9cab;
+  --secondary-light: #a7bdc8;
+  --secondary-very-light: #ebf0f2;
+
+  --green-dark: #62936c;
+  --green-light: #c2d6c6;
+
+  --red-dark: #c44f4f;
+  --red-light: #f2d9d9;
+
+  --orange-dark: #9f7d56;
+  --orange-light: #dbcdbd;
+
+  --font-display: 'Hammersmith One', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-body: 'Zilla Slab', Georgia, 'Times New Roman', serif;
+
+  /* Respect the notch / home indicator when installed to the home screen. */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-display);
+  background-color: var(--primary-very-dark);
+  color: var(--primary-very-light);
+  -webkit-user-select: none;
+  user-select: none;
+  /* Stop iOS Safari rubber-banding the whole app while dragging a slider. */
+  overscroll-behavior: none;
+  -webkit-text-size-adjust: 100%;
+}
+
+#root {
+  height: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

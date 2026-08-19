@@ -1,0 +1,68 @@
+.container {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding-top: var(--safe-top);
+  padding-bottom: var(--safe-bottom);
+}
+
+.placeholder {
+  flex: 4;
+  align-self: stretch;
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+
+  text-align: center;
+  color: white;
+  font-size: 3em;
+  text-transform: uppercase;
+  transition: background-color 120ms ease-out;
+}
+
+.cue {
+  padding: 0 0.4em;
+  line-height: 1.1;
+}
+
+.round {
+  position: absolute;
+  top: 0.6em;
+  left: 0;
+  right: 0;
+  font-size: 0.32em;
+  letter-spacing: 0.18em;
+  opacity: 0.65;
+  font-family: var(--font-body);
+  text-transform: uppercase;
+}
+
+/* Par-time bar. It only runs during GO, where the remaining time is
+   information the trainee is supposed to have — never during the standby
+   phase, which has to stay unpredictable. */
+.par {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 0.18em;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.85);
+  transform-origin: left center;
+  animation: drain linear forwards;
+  animation-duration: var(--par-duration);
+}
+
+@keyframes drain {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}

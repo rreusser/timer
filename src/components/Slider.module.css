@@ -1,0 +1,86 @@
+.container {
+  flex: 1;
+  align-self: stretch;
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+
+  text-align: center;
+  cursor: ew-resize;
+  background-color: var(--primary-very-dark);
+  color: var(--secondary-very-light);
+}
+
+.container:focus-within {
+  outline: 3px solid var(--primary-very-light);
+  outline-offset: -6px;
+}
+
+/* The filled portion of the track, translated rather than resized so the
+   browser can keep it on the compositor while a finger is dragging. */
+.fill {
+  display: block;
+  position: absolute;
+  inset: 0;
+  transform-origin: left center;
+  will-change: transform;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  flex: 0;
+  pointer-events: none;
+}
+
+.value {
+  display: inline-block;
+  font-size: 2em;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+}
+
+.units {
+  font-size: 0.7em;
+  opacity: 0.75;
+}
+
+.label {
+  display: block;
+  text-transform: uppercase;
+  font-size: 1em;
+  font-family: var(--font-body);
+}
+
+/* The real control: invisible, exactly covering the slab. It supplies native
+   drag, keyboard stepping and the correct ARIA semantics. */
+.input {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: inherit;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  touch-action: none;
+}
+
+.input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 1px;
+  height: 100%;
+}
+
+.input::-moz-range-thumb {
+  width: 1px;
+  height: 100%;
+  border: none;
+}

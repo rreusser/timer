@@ -1,0 +1,6 @@
+.main {
+  position: absolute;
+  inset: 0;
+  background-color: var(--primary-very-dark);
+  overflow: hidden;
+}
