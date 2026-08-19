@@ -12,6 +12,13 @@
   cursor: ew-resize;
   background-color: var(--primary-very-dark);
   color: var(--secondary-very-light);
+
+  /* The slab handles the drag itself, so the browser must not claim the
+     gesture for scrolling or pinch-zoom first. */
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .container:focus-within {
@@ -57,6 +64,8 @@
 
 /* The real control: invisible, exactly covering the slab. It supplies native
    drag, keyboard stepping and the correct ARIA semantics. */
+/* Keyboard and assistive technology only. Pointer input is handled by the
+   slab above, so this must never intercept it. */
 .input {
   position: absolute;
   inset: 0;
@@ -65,22 +74,21 @@
   height: 100%;
   margin: 0;
   opacity: 0;
-  cursor: inherit;
+  pointer-events: none;
   -webkit-appearance: none;
   appearance: none;
   background: transparent;
-  touch-action: none;
 }
 
 .input::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 1px;
+  width: 0;
   height: 100%;
 }
 
 .input::-moz-range-thumb {
-  width: 1px;
+  width: 0;
   height: 100%;
   border: none;
 }
