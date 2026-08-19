@@ -89,6 +89,53 @@ DONE      --------->  RESETTING   wait `interval` - 2s,          then READYSET
 The standby delay is floored at 1s, so a low `delay` with high `randomness`
 can never fire instantly.
 
+## As a PWA
+
+Install it and it behaves like an app: no browser chrome, a home screen icon,
+and it works with no network at all.
+
+- **Fully offline.** The shell, the JavaScript, the CSS _and_ the fonts are
+  precached. The original pulled Hammersmith One and Zilla Slab from
+  `fonts.googleapis.com`, so an offline launch silently fell back to system
+  fonts and first paint waited on two extra origins. They are self-hosted now
+  (latin subsets, 72 KB total).
+- **Updates ask first.** `registerType` is `prompt`, not `autoUpdate`. An
+  automatic update takes over and reloads the moment a new worker activates,
+  which would throw away a training session mid-round. Instead a notice
+  offers a reload — and never during a session.
+- **Install prompt.** `beforeinstallprompt` is captured and offered as a
+  dismissible notice rather than the browser's mini-infobar. iOS has no such
+  event, so the tour explains Share → Add to Home Screen there instead.
+- **A real maskable icon.** Android crops icons to an arbitrary shape and only
+  guarantees the inner 80% circle. The regular icon loses its crown and the
+  bottom of the dial to that mask, so `maskable-512.png` is separate artwork
+  scaled into the safe zone.
+- **Manifest screenshots**, which unlock Chrome's richer install dialog on
+  Android, plus `id`, `lang`, `dir`, `categories` and
+  `launch_handler: navigate-existing` so launching twice reuses the window.
+- **Notices sit in the layout, not over it.** The menu is a stack of
+  full-bleed drag targets; a floating toast would swallow drags meant for the
+  slider underneath.
+
+Two things deliberately left out. There is no **manifest shortcut** that jumps
+straight into a session: a shortcut launch is not a user gesture, so the
+AudioContext would stay suspended and the session would run silently — the
+exact failure this app was resurrected from. And there are no **iOS splash
+screens**; they need a dozen fixed-size images matched by media query, and the
+dark `theme-color` already avoids a white flash.
+
+Regenerating the generated assets:
+
+```sh
+npm run icons        # PNG icon set from tools/icons/*.svg (uses sharp)
+
+# Screenshots are opt-in: Playwright is not a project dependency.
+npm run build
+npx --yes playwright@latest install chromium
+node tools/generate-screenshots.mjs
+npm run build        # copy them into dist/
+```
+
 ## If you can't hear anything
 
 - **Web Audio needs a gesture.** The context is created and resumed inside the
@@ -144,10 +191,17 @@ plain `http://`.
 src/
   App.tsx              screen switching, config state, lifecycle
   theme.css            palette and resets
+  fonts.css            self-hosted @font-face declarations
+  assets/fonts/        woff2, latin subsets
   lib/
     timer.ts           the state machine — no React, no globals
     audio.ts           gesture-unlocked Web Audio beeper
     config.ts          bounds, defaults, localStorage (incl. v1 migration)
     useWakeLock.ts     keeps the screen on during a session
-  components/          Menu, Train, Slider, Button, Tour
+    usePwa.ts          service worker updates and the install prompt
+  components/          Menu, Train, Slider, Button, Tour, Banner
+tools/
+  icons/               SVG sources for the icon set
+  generate-icons.mjs   -> public/*.png
+  generate-screenshots.mjs -> public/screenshots/*.png
 ```

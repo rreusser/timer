@@ -10,6 +10,14 @@ export default tseslint.config(
   tseslint.configs.recommended,
   reactHooks.configs.flat['recommended-latest'],
   {
+    // Build-time scripts run in Node, but their page.evaluate() callbacks are
+    // serialised and run in the browser, so both global sets are in play.
+    files: ['tools/**/*.mjs'],
+    languageOptions: {
+      globals: { ...globals.node, ...globals.browser },
+    },
+  },
+  {
     files: ['**/*.{ts,tsx}'],
     languageOptions: {
       ecmaVersion: 2022,

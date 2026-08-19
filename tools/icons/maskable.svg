@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Reaction Trainer">
+  <!--
+    Maskable variant. Android crops icons to an arbitrary shape and only
+    guarantees the inner 80% circle (radius 204.8 about the centre) survives.
+    The background is full-bleed, and the artwork is scaled to 0.72 and
+    recentred on its own bounding box so nothing important is cropped.
+  -->
+  <rect width="512" height="512" fill="#353237"/>
+  <g transform="translate(256 256) scale(0.72) translate(-256 -259.5)">
+    <rect x="216" y="52" width="80" height="34" rx="12" fill="#b2a3bd"/>
+    <circle cx="256" cy="300" r="150" fill="none" stroke="#6c587b" stroke-width="34"/>
+    <path d="M256 150 A150 150 0 0 1 362 406" fill="none" stroke="#62936c" stroke-width="34" stroke-linecap="round"/>
+    <path d="M256 300 L256 190" stroke="#e5e0e9" stroke-width="26" stroke-linecap="round"/>
+    <circle cx="256" cy="300" r="26" fill="#e5e0e9"/>
+  </g>
+</svg>

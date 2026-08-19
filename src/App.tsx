@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState, useSyncExternalStore } from 'react';
 import styles from './App.module.css';
+import { Banner } from './components/Banner';
 import { Menu } from './components/Menu';
 import { Train } from './components/Train';
 import { Tour } from './components/Tour';
@@ -12,6 +13,7 @@ import {
   type TimerConfig,
 } from './lib/config';
 import { ReactionTimer } from './lib/timer';
+import { usePwa, type PwaState } from './lib/usePwa';
 import { useWakeLock } from './lib/useWakeLock';
 
 const TOUR_DISABLED_KEY = 'reactionTrainer.tourDisabled';
@@ -61,6 +63,13 @@ export function App() {
 
   useWakeLock(screen === 'train');
 
+  const pwa = usePwa();
+  const [installDismissed, setInstallDismissed] = useState(false);
+
+  // Notices never appear over a running session: the training screen has to
+  // stay glanceable, and an update must not reload a round out from under you.
+  const banner = screen === 'train' ? null : pickBanner(pwa, installDismissed, setInstallDismissed);
+
   const handleChange = useCallback((key: ConfigKey, value: number) => {
     setConfig((previous) => ({ ...previous, [key]: value }));
   }, []);
@@ -104,12 +113,52 @@ export function App() {
 
   return (
     <div className={styles.main}>
-      {screen === 'train' ? (
-        <Train state={state} round={round} target={config.target} onStop={handleStop} />
-      ) : (
-        <Menu config={config} onChange={handleChange} onStart={handleStart} />
-      )}
-      {tourVisible && screen === 'menu' && <Tour onDismiss={dismissTour} onDisable={disableTour} />}
+      {banner && <Banner {...banner} />}
+      <div className={styles.screen}>
+        {screen === 'train' ? (
+          <Train state={state} round={round} target={config.target} onStop={handleStop} />
+        ) : (
+          <Menu config={config} onChange={handleChange} onStart={handleStart} />
+        )}
+        {tourVisible && screen === 'menu' && (
+          <Tour onDismiss={dismissTour} onDisable={disableTour} />
+        )}
+      </div>
     </div>
   );
+}
+
+interface BannerSpec {
+  message: string;
+  actionLabel?: string;
+  onAction?: () => void;
+  onDismiss: () => void;
+}
+
+/** At most one notice at a time, most actionable first. */
+function pickBanner(
+  pwa: PwaState,
+  installDismissed: boolean,
+  setInstallDismissed: (dismissed: boolean) => void,
+): BannerSpec | null {
+  if (pwa.needRefresh) {
+    return {
+      message: 'A new version is ready.',
+      actionLabel: 'Reload',
+      onAction: pwa.applyUpdate,
+      onDismiss: pwa.dismissUpdate,
+    };
+  }
+  if (pwa.canInstall && !installDismissed) {
+    return {
+      message: 'Install this app for offline use and a home screen icon.',
+      actionLabel: 'Install',
+      onAction: pwa.install,
+      onDismiss: () => setInstallDismissed(true),
+    };
+  }
+  if (pwa.offlineReady) {
+    return { message: 'Ready to use offline.', onDismiss: pwa.dismissOfflineReady };
+  }
+  return null;
 }
