@@ -93,13 +93,6 @@ export function Tour({ onDismiss, onDisable }: TourProps) {
               Share, then <strong>Add to Home Screen</strong>.
             </p>
           )}
-          <p className={styles.body}>
-            Comments? Questions?
-            <br />
-            <a href="mailto:rsreusser+reactiontimer@gmail.com" className={styles.link}>
-              Let me know
-            </a>
-          </p>
         </div>
         <div className={styles.item}>
           <Button onPress={onDismiss} fontSize={1.2} label="Got it!" colors={GOT_IT_COLORS} />
